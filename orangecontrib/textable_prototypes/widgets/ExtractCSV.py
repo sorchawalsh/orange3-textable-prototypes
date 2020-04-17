@@ -132,6 +132,9 @@ class ExtractCSV(OWTextableBaseWidget):
         )
         self.controlArea.setDisabled(True)
         progressBar = ProgressBar(self, iterations=len(self.inputSeg))
+
+        outputSeg = list()
+
         # Process each input segment...
         for segment in self.inputSeg:
         
@@ -141,27 +144,49 @@ class ExtractCSV(OWTextableBaseWidget):
             inputString = segment.str_index
             inputStart = segment.start or 0
             inputEnd = segment.end or len(inputContent)
+
             #Call data processing
             csv_stream = io.StringIO(inputContent)
             dialect = sniffer.sniff(csv_stream.readline())
             csv_stream.seek(0)
             my_reader = csv.reader(csv_stream, dialect)
-            outputSeg = list()
+
+            # Process each seg in inputContent
+            for seg in inputContent:
+            	segAnnotations = inputAnnotations.copy()
+            	segAnnotations.update(
+            		{
+            			# TODO: annotation dict
+            		}
+            	)
+
+            	#getting segmentation length
+            	segStart = inputStart+seg.idx
+            		
+
             if sniffer.has_header(inputContent) == True:
                 attribute_list = next(my_reader)
                 self.displayData(self, attribute_list)
                 outputSeg.append(
-                                Segment(
-                                # placeholder
-                                str_index = 0
-                                )
-                            )
+                    Segment(
+                        # placeholder
+                        str_index=inputString,
+                        start=segStart,
+                        end=segStart+len(seg),
+                        annotations=segAnnotations,
+                    )
+                )
             else:
-                outputSeg.append(Segment(
-                                # placeholder
-                                str_index = 0
-                                )
-                            )
+                outputSeg.append(
+                	Segment(
+                        # placeholder
+                        str_index=inputString,
+                   		start=segStart,
+                   		end=segStart+len(seg),
+                   		andnnotations=segAnnotations,
+                    )
+                )
+
             progressBar.advance()
 
                  

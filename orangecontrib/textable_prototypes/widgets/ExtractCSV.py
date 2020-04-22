@@ -68,6 +68,10 @@ class ExtractCSV(OWTextableBaseWidget):
     want_main_area = False
 
     #----------------------------------------------------------------------
+    # Query settings...
+
+    mode = settings.Setting("automatic")
+
     # Settings...
 
     settingsHandler = VersionedSettingsHandler(
@@ -75,7 +79,6 @@ class ExtractCSV(OWTextableBaseWidget):
     )
     
     autoSend = settings.Setting(False)
-    model = settings.Setting("fr_core_news_sm")
     
     def __init__(self):
         """Widget creator."""
@@ -99,16 +102,97 @@ class ExtractCSV(OWTextableBaseWidget):
             sendIfPreCallback=None,
         )
 
-        # User interface will go here
+        # User interface...
+
+        #-------------------------#
+        #    Main widget box      #
+        #-------------------------#
+        self.mainBox = gui.widgetBox(
+            widget=self.controlArea,
+            orientation='vertical',
+            addSpace=False,
+        )
         
+        # query mode
+        self.choiceBox = gui.comboBox(
+            widget=mainBox,
+            master=self, 
+            value='mode', 
+            label="Mode:",
+            callback=self.mode_changed,
+            tooltip= "Choose mode",
+            orientation='horizontal',
+            sendSelectedValue=True,
+            items=["automatic", "manual"],
+            labelWidth=135,
+        )
+
+        #-------------------------#
+        #       Manual box        #
+        #-------------------------#
+        # Options box...
+        self.manualBox = gui.widgetBox(
+            widget=self.controlArea,
+            box="Click to select a header to modify",
+            orientation="vertical",
+        )
+
+        # List of all the headers (named with numbers if None)
+        self.headerListbox = gui.listBox(
+            widget=manualBox,
+            master=self,
+            value=None, # i guess we will need this
+            labels=None,
+            callback=None, # and this
+            selectionMode=1, # can only choose one item
+            tooltip="List of all the headers you can rename and\
+                change which one is the content",
+            orientation="horizontal"
+        )
+
+        self.renameHeader = gui.button(
+            widget=manualBox,
+            master=self,
+            label="rename",
+            callback=None,
+            orientation="horizontal"
+        )
+
+        self.iscontentHeader = gui.button(
+            widget=manualBox,
+            master=self,
+            label="use as content",
+            callback=None,
+            orientation="vertical"
+        )
+
+        gui.rubber(self.controlArea)
+
         # Now Info box and Send button must be drawn...
         self.sendButton.draw()
         self.infoBox.draw()
+
+        self.mode_changed
+        self.sendButton.settingsChanged()
+
         self.infoBox.setText("Widget needs input", "warning")
-        
+
         # Send data if autoSend.
         self.sendButton.sendIf()
-                
+    
+    def mode_changed(self):
+        self.sendButton.settingsChanged()
+        """Allows to update the interface depeding on query mode"""
+        if self.mode == "automatic": # 0 = automatic selected
+            # Hide manual options
+            self.manualBox.setVisible(False)
+
+        elif self.mode == "manual": # self.mode ==1 => manual selected
+            # Show manual options
+            self.manualBox.setVisible(True)
+
+        return
+            
     def inputData(self, newInput):
         """Process incoming data."""
         self.inputSeg = newInput
@@ -173,7 +257,8 @@ class ExtractCSV(OWTextableBaseWidget):
 
                  
         # Set status to OK and report data size...
-        message = "Did something"
+        message = "%i segment@p sent to output." % len(outputSeg)
+        message = pluralize(message, len(outputSeg))
         self.infoBox.setText(message)
         
         # Clear progress bar.

@@ -70,7 +70,7 @@ class ExtractCSV(OWTextableBaseWidget):
     #----------------------------------------------------------------------
     # Query settings...
 
-    mode = settings.Setting("automatic")
+    selected_mode = settings.Setting("automatic")
 
     # Settings...
 
@@ -107,24 +107,24 @@ class ExtractCSV(OWTextableBaseWidget):
         #-------------------------#
         #    Main widget box      #
         #-------------------------#
-        self.mainBox = gui.widgetBox(
+        self.selectBox = gui.widgetBox(
             widget=self.controlArea,
+            box = "Select",
             orientation='vertical',
             addSpace=False,
         )
         
-        # query mode
-        self.choiceBox = gui.comboBox(
-            widget=mainBox,
+        # query mode whithout a callback function
+        self.modeCombo = gui.comboBox(
+            widget=self.selectBox,
             master=self, 
-            value='mode', 
-            label="Mode:",
-            callback=self.mode_changed,
-            tooltip= "Choose mode",
-            orientation='horizontal',
+            value='selected_mode',
             sendSelectedValue=True,
-            items=["automatic", "manual"],
-            labelWidth=135,
+            items=['automatic', 'manual'],
+            orientation='horizontal',
+            label="Mode:",
+            callback=mode_changed,
+            tooltip= "Choose mode",   
         )
 
         #-------------------------#

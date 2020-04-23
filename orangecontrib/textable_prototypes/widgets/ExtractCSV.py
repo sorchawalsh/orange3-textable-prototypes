@@ -28,8 +28,6 @@ __email__ = "aris.xanthos@unil.ch"
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
-from AnyQt.QtGui import QTabWidget, QWidget, QHBoxLayout
-
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
 import LTTL.Segmenter
@@ -114,9 +112,9 @@ class ExtractCSV(OWTextableBaseWidget):
             addSpace=False,
         )
         
-        # query mode whithout a callback function
+        # changing mode combobox 
         self.modeCombo = gui.comboBox(
-            widget=self.selectBox,
+            widget=selectBox,
             master=self, 
             value='selected_mode',
             sendSelectedValue=True,
@@ -130,7 +128,7 @@ class ExtractCSV(OWTextableBaseWidget):
         #-------------------------#
         #       Manual box        #
         #-------------------------#
-        # Options box...
+        # manual box...
         self.manualBox = gui.widgetBox(
             widget=self.controlArea,
             box="Click to select a header to modify",
@@ -141,15 +139,16 @@ class ExtractCSV(OWTextableBaseWidget):
         self.headerListbox = gui.listBox(
             widget=manualBox,
             master=self,
-            value=None, # i guess we will need this
+            value=None,
             labels=None,
-            callback=None, # and this
+            callback=None,
             selectionMode=1, # can only choose one item
             tooltip="List of all the headers you can rename and\
                 change which one is the content",
             orientation="horizontal"
         )
 
+        # set "rename" button (must be aside the list)
         self.renameHeader = gui.button(
             widget=manualBox,
             master=self,
@@ -158,6 +157,7 @@ class ExtractCSV(OWTextableBaseWidget):
             orientation="horizontal"
         )
 
+        # set "use as content" button (must be aside the list)
         self.iscontentHeader = gui.button(
             widget=manualBox,
             master=self,
@@ -172,8 +172,7 @@ class ExtractCSV(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
 
-        self.mode_changed
-        self.sendButton.settingsChanged()
+        self.mode_changed()
 
         self.infoBox.setText("Widget needs input", "warning")
 
@@ -182,12 +181,12 @@ class ExtractCSV(OWTextableBaseWidget):
     
     def mode_changed(self):
         self.sendButton.settingsChanged()
-        """Allows to update the interface depeding on query mode"""
-        if self.selected_mode == "automatic": # 0 = automatic selected
+        """Allows to update the interface depending on query mode"""
+        if self.selected_mode == "automatic": # automatic selected
             # Hide manual options
             self.manualBox.setVisible(False)
 
-        elif self.selected_mode == "manual": # self.mode ==1 => manual selected
+        elif self.selected_mode == "manual": # manual selected
             # Show manual options
             self.manualBox.setVisible(True)
 

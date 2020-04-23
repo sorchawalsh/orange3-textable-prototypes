@@ -183,11 +183,11 @@ class ExtractCSV(OWTextableBaseWidget):
     def mode_changed(self):
         self.sendButton.settingsChanged()
         """Allows to update the interface depeding on query mode"""
-        if self.mode == "automatic": # 0 = automatic selected
+        if self.selected_mode == "automatic": # 0 = automatic selected
             # Hide manual options
             self.manualBox.setVisible(False)
 
-        elif self.mode == "manual": # self.mode ==1 => manual selected
+        elif self.selected_mode == "manual": # self.mode ==1 => manual selected
             # Show manual options
             self.manualBox.setVisible(True)
 

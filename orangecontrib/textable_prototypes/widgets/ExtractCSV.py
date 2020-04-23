@@ -28,6 +28,8 @@ __email__ = "aris.xanthos@unil.ch"
 from Orange.widgets import gui, settings
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
+from PyQt5.QtCore import QTimer
+
 from LTTL.Segmentation import Segmentation
 from LTTL.Segment import Segment
 import LTTL.Segmenter
@@ -175,6 +177,10 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # Send data if autoSend.
         self.sendButton.sendIf()
+
+        # adjust size
+        # self.adjustSizeWithTimer()
+        # QTimer.singleShot(0, self.sendButton.sendIf)
     
     def mode_changed(self):
         self.sendButton.settingsChanged()

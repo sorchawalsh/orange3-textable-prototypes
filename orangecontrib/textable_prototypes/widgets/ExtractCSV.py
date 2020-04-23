@@ -114,14 +114,14 @@ class ExtractCSV(OWTextableBaseWidget):
         
         # changing mode combobox 
         self.modeCombo = gui.comboBox(
-            widget=selectBox,
+            widget=self.selectBox,
             master=self, 
             value='selected_mode',
             sendSelectedValue=True,
             items=['automatic', 'manual'],
             orientation='horizontal',
             label="Mode:",
-            callback=mode_changed,
+            callback=self.mode_changed,
             tooltip= "Choose mode",   
         )
 
@@ -137,7 +137,7 @@ class ExtractCSV(OWTextableBaseWidget):
 
         # List of all the headers (named with numbers if None)
         self.headerListbox = gui.listBox(
-            widget=manualBox,
+            widget=self.manualBox,
             master=self,
             value=None,
             labels=None,
@@ -145,25 +145,22 @@ class ExtractCSV(OWTextableBaseWidget):
             selectionMode=1, # can only choose one item
             tooltip="List of all the headers you can rename and\
                 change which one is the content",
-            orientation="horizontal"
         )
 
         # set "rename" button (must be aside the list)
         self.renameHeader = gui.button(
-            widget=manualBox,
+            widget=self.manualBox,
             master=self,
             label="rename",
             callback=None,
-            orientation="horizontal"
         )
 
         # set "use as content" button (must be aside the list)
         self.iscontentHeader = gui.button(
-            widget=manualBox,
+            widget=self.manualBox,
             master=self,
             label="use as content",
             callback=None,
-            orientation="vertical"
         )
 
         gui.rubber(self.controlArea)
